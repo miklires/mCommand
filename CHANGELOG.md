@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 - 2026-08-24
+
+### Fixed
+
+- release packaging for Linux-based CI and distribution
+
 ## 1.0.0 - 2026-08-24
 
 ### Added

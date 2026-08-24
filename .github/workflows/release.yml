@@ -43,4 +43,4 @@ jobs:
           MODRINTH_PROJECT_ID: ${{ secrets.MODRINTH_PROJECT_ID }}
       - uses: softprops/action-gh-release@v3
         with:
-          files: build/libs/mCommand-1.0.0.jar
+          files: build/libs/mCommand-1.0.1.jar

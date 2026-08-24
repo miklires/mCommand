@@ -42,7 +42,7 @@ Velocity is not required and no proxy artifact is included.
 
 ## Install
 
-1. Put `mCommand-1.0.0.jar` in the server's `plugins` directory.
+1. Put `mCommand-1.0.1.jar` in the server's `plugins` directory.
 2. Start the server once.
 3. Edit `plugins/mCommand/config.yml` and restart when changing command modules.
 
@@ -93,4 +93,4 @@ The update setting is separate from telemetry. Disable update discovery with `up
 ./gradlew clean build
 ```
 
-The release JAR is written to `build/libs/mCommand-1.0.0.jar`. The project is licensed under the MIT License.
+The release JAR is written to `build/libs/mCommand-1.0.1.jar`. The project is licensed under the MIT License.
