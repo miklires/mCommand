@@ -1,9 +1,10 @@
 name: mCommand
 version: ${version}
-main: ru.mossheaven.mcommand.MCommand
-api-version: '1.21'
+main: io.github.miklires.mcommand.MCommand
+api-version: '26.2'
 author: miklires
-description: Набор удобных команд для сервера
+description: A lightweight modular administration toolkit
+folia-supported: true
 
 commands:
   fly:
