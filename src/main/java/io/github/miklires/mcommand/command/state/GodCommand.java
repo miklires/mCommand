@@ -22,13 +22,13 @@ public class GodCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
-        boolean newState = !target.isInvulnerable();
-        target.setInvulnerable(newState);
-        send(sender, newState ? "god-on" : "god-off", "player", target.getName());
-        if (target != sender) {
-            target.sendMessage(mm.deserialize(prefix() + msg(newState ? "god-on" : "god-off")
+        plugin.runFor(target, () -> {
+            boolean newState = !target.isInvulnerable();
+            target.setInvulnerable(newState);
+            send(sender, newState ? "god-on" : "god-off", "player", target.getName());
+            if (target != sender) target.sendMessage(mm.deserialize(prefix() + msg(newState ? "god-on" : "god-off")
                     .replace("{player}", target.getName())));
-        }
+        });
     }
 }
 

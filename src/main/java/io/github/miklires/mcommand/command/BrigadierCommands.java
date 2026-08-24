@@ -54,8 +54,9 @@ public final class BrigadierCommands {
 
     private void register(Commands commands, String name, CommandExecutor executor, List<String> aliases) {
         if (!name.equals("mcommand") && !plugin.getConfigManager().isCommandEnabled(name)) return;
-        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(name)
-                .executes(context -> invoke(executor, name, context));
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(name);
+        if (!name.equals("mcommand")) root.requires(source -> hasBasePermission(source.getSender(), name));
+        root.executes(context -> invoke(executor, name, context));
         root.then(Commands.argument("arguments", StringArgumentType.greedyString())
                 .suggests((context, builder) -> {
                     String remaining = builder.getRemainingLowerCase();
@@ -67,6 +68,14 @@ public final class BrigadierCommands {
                 .executes(context -> invoke(executor, name, context,
                         StringArgumentType.getString(context, "arguments").trim().split("\\s+"))));
         commands.register(root.build(), "mCommand: " + name, aliases);
+    }
+
+    private boolean hasBasePermission(CommandSender sender, String name) {
+        if (!name.equals("gm")) return sender.hasPermission("mcommand.command." + name);
+        return sender.hasPermission("mcommand.command.gm.survival")
+                || sender.hasPermission("mcommand.command.gm.creative")
+                || sender.hasPermission("mcommand.command.gm.adventure")
+                || sender.hasPermission("mcommand.command.gm.spectator");
     }
 
     private int invoke(CommandExecutor executor, String name, CommandContext<CommandSourceStack> context,

@@ -22,9 +22,10 @@ public class FeedCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
-        target.setFoodLevel(20);
-        target.setSaturation(20);
-        send(sender, "feed-done", "player", target.getName());
+        plugin.runFor(target, () -> {
+            target.setFoodLevel(20); target.setSaturation(20);
+            send(sender, "feed-done", "player", target.getName());
+        });
     }
 }
 

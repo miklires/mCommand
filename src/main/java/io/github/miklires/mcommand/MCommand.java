@@ -7,8 +7,10 @@ import io.github.miklires.mcommand.data.BackLocationManager;
 import io.github.miklires.mcommand.listener.BackTrackingListener;
 import io.github.miklires.mcommand.listener.PlayerStateListener;
 import io.github.miklires.mcommand.util.MessageUtil;
+import io.github.miklires.mcommand.update.UpdateChecker;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.Player;
 
 public final class MCommand extends JavaPlugin {
     private ConfigManager configManager;
@@ -30,6 +32,7 @@ public final class MCommand extends JavaPlugin {
         if (configManager.isMetricsEnabled() && configManager.getBstatsId() > 0) {
             new org.bstats.bukkit.Metrics(this, configManager.getBstatsId());
         }
+        getServer().getAsyncScheduler().runNow(this, task -> new UpdateChecker(this).check());
         getLogger().info("mCommand enabled");
     }
 
@@ -44,4 +47,7 @@ public final class MCommand extends JavaPlugin {
     public BackLocationManager getBackLocationManager() { return backLocationManager; }
     public MessageUtil getMessageUtil() { return messageUtil; }
     public ModernCommand getModernCommand() { return modernCommand; }
+    public void runFor(Player player, Runnable task) {
+        player.getScheduler().execute(this, task, null, 1L);
+    }
 }

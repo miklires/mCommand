@@ -63,9 +63,11 @@ public class GamemodeCommand implements CommandExecutor {
         } else {
             player = (Player) sender;
         }
-        player.setGameMode(mode);
-        sender.sendMessage(mm.deserialize(prefix
-                + plugin.getMessageUtil().get("gm-set").replace("{mode}", localizedName(mode))));
+        plugin.runFor(player, () -> {
+            player.setGameMode(mode);
+            sender.sendMessage(mm.deserialize(prefix
+                    + plugin.getMessageUtil().get("gm-set").replace("{mode}", localizedName(mode))));
+        });
         return true;
     }
 

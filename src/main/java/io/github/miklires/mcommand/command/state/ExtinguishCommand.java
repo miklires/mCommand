@@ -22,8 +22,7 @@ public class ExtinguishCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
-        target.setFireTicks(0);
-        send(sender, "ext-done", "player", target.getName());
+        plugin.runFor(target, () -> { target.setFireTicks(0); send(sender, "ext-done", "player", target.getName()); });
     }
 }
 

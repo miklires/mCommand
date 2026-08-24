@@ -30,6 +30,8 @@ public final class ConfigManager {
     public boolean isMetricsEnabled() { return plugin.getConfig().getBoolean("metrics.enabled", true); }
     public int getBstatsId() { return Math.max(0, plugin.getConfig().getInt("metrics.bstats-id", 33356)); }
     public boolean isUpdatesEnabled() { return plugin.getConfig().getBoolean("updates.enabled", true); }
+    public String modrinthProjectId() { return plugin.getConfig().getString("updates.modrinth-project-id", "").trim(); }
+    public int updateTimeoutMillis() { return (int) range("updates.timeout-millis", 8000, 500, 60000); }
     public double maxNearRadius() { return range("limits.near-max-radius", 200, 1, 5000); }
     public double maxTeleportCoordinate() { return range("limits.max-teleport-coordinate", 30_000_000, 1000, 30_000_000); }
 

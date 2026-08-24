@@ -67,3 +67,4 @@ metrics:
 updates:
   enabled: true
   modrinth-project-id: ""
+  timeout-millis: 8000

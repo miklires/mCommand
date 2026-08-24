@@ -23,12 +23,12 @@ public class HealCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
-        double max = target.getAttribute(Attribute.MAX_HEALTH).getValue();
-        target.setHealth(max);
-        target.setFoodLevel(20);
-        target.setSaturation(20);
-        target.setFireTicks(0);
-        send(sender, "heal-done", "player", target.getName());
+        plugin.runFor(target, () -> {
+            var attribute = target.getAttribute(Attribute.MAX_HEALTH);
+            double max = attribute == null ? 20 : attribute.getValue();
+            target.setHealth(max); target.setFoodLevel(20); target.setSaturation(20); target.setFireTicks(0);
+            send(sender, "heal-done", "player", target.getName());
+        });
     }
 }
 

@@ -23,8 +23,7 @@ public class ClearCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
-        target.getInventory().clear();
-        send(sender, "clear-done", "player", target.getName());
+        plugin.runFor(target, () -> { target.getInventory().clear(); send(sender, "clear-done", "player", target.getName()); });
     }
 }
 

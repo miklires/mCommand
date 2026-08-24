@@ -138,7 +138,9 @@ public final class ModernCommand implements CommandExecutor {
         boolean enabled = vanished.add(target.getUniqueId()); if (!enabled) vanished.remove(target.getUniqueId());
         for (Player observer : Bukkit.getOnlinePlayers()) {
             if (observer == target || observer.hasPermission("mcommand.vanish.see")) continue;
-            if (enabled) observer.hidePlayer(plugin, target); else observer.showPlayer(plugin, target);
+            plugin.runFor(observer, () -> {
+                if (enabled) observer.hidePlayer(plugin, target); else observer.showPlayer(plugin, target);
+            });
         }
         sender.sendMessage(Component.text("Vanish " + (enabled ? "enabled" : "disabled") + " for " + target.getName() + '.', NamedTextColor.GREEN)); return true;
     }
