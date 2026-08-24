@@ -1,6 +1,9 @@
 package io.github.miklires.mcommand.command.base;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -59,5 +62,12 @@ public abstract class AbstractMCommand implements CommandExecutor {
 
     protected String prefix() { return plugin.getMessageUtil().prefix(); }
     protected String msg(String key) { return plugin.getMessageUtil().get(key); }
+
+    protected Component parseUserText(CommandSender sender, String input) {
+        if (sender.hasPermission("mcommand.format.unsafe")) return mm.deserialize(input);
+        MiniMessage safe = MiniMessage.builder().tags(TagResolver.resolver(
+                StandardTags.color(), StandardTags.decorations(), StandardTags.reset())).build();
+        return safe.deserialize(input);
+    }
 }
 

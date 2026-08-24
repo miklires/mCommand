@@ -43,7 +43,7 @@ public class LoreCommand extends AbstractMCommand {
                 if (args.length < 2) { send(sender, "lore-usage"); return; }
                 String text = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
                 List<Component> lore = meta.lore() != null ? new ArrayList<>(meta.lore()) : new ArrayList<>();
-                lore.add(mm.deserialize(text).decoration(TextDecoration.ITALIC, false));
+                lore.add(parseUserText(sender, text).decoration(TextDecoration.ITALIC, false));
                 meta.lore(lore);
                 send(sender, "lore-added");
             }

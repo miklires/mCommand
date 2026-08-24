@@ -6,80 +6,26 @@ author: miklires
 description: A lightweight modular administration toolkit
 folia-supported: true
 
-commands:
-  fly:
-    description: Переключить полёт
-  god:
-    description: Неуязвимость
-  heal:
-    description: Восстановить HP и еду
-  feed:
-    description: Восстановить еду
-  repair:
-    description: Починить предмет в руке
-  speed:
-    description: Скорость ходьбы или полёта
-  ext:
-    description: Потушить себя
-    aliases: [extinguish]
-  invsee:
-    description: Открыть инвентарь игрока
-  ec:
-    description: Открыть свой эндер-сундук
-    aliases: [enderchest]
-  top:
-    description: ТП на верх в текущей колонке
-  back:
-    description: Вернуться в предыдущую точку
-  hat:
-    description: Надеть предмет с руки на голову
-  anvil:
-    description: Открыть наковальню
-  wb:
-    description: Открыть верстак
-    aliases: [workbench, craft]
-  clear:
-    description: Очистить инвентарь
-  skull:
-    description: Получить голову игрока
-  itemname:
-    description: Переименовать предмет в руке
-    aliases: [rename]
-  lore:
-    description: Управление lore предмета
-  sudo:
-    description: Выполнить команду от имени игрока
-  day:
-    description: Установить день
-  night:
-    description: Установить ночь
-  sun:
-    description: Установить ясную погоду
-    aliases: [clearweather]
-  rain:
-    description: Включить дождь
-  ping:
-    description: Показать пинг игрока
-  seen:
-    description: Когда игрок был онлайн
-  playtime:
-    description: Время игры
-  broadcast:
-    description: Сообщение всем игрокам
-    aliases: [bc]
-  clearchat:
-    description: Очистить чат
-    aliases: [cc]
-  gm:
-    description: Сменить режим игры
-    usage: /gm <0|1|2|3>
-  mcommand:
-    description: Управление mCommand
-    aliases: [mcmd]
-
 permissions:
   mcommand.admin:
-    description: Админ-доступ + все команды
+    description: All mCommand administration permissions
+    default: op
+    children:
+      mcommand.commands: true
+      mcommand.command.sudo.other: true
+      mcommand.command.sudo.console: true
+      mcommand.command.invsee.modify: true
+      mcommand.command.invsee.offline: true
+      mcommand.command.gm.other: true
+      mcommand.command.clear.other: true
+      mcommand.command.tp.other: true
+      mcommand.command.vanish.other: true
+      mcommand.command.whois.ip: true
+      mcommand.format.unsafe: true
+      mcommand.exempt.bypass: true
+      mcommand.vanish.see: true
+  mcommand.commands:
+    description: All base mCommand commands
     default: op
     children:
       mcommand.command.fly: true
@@ -88,97 +34,73 @@ permissions:
       mcommand.command.feed: true
       mcommand.command.repair: true
       mcommand.command.speed: true
+      mcommand.command.speed.max.10: true
       mcommand.command.ext: true
-      mcommand.command.invsee: true
-      mcommand.command.top: true
-      mcommand.command.back: true
-      mcommand.command.anvil: true
-      mcommand.command.clear: true
-      mcommand.command.skull: true
-      mcommand.command.itemname: true
-      mcommand.command.lore: true
-      mcommand.command.sudo: true
-      mcommand.command.day: true
-      mcommand.command.night: true
-      mcommand.command.sun: true
-      mcommand.command.rain: true
-      mcommand.command.broadcast: true
-      mcommand.command.clearchat: true
-      mcommand.command.ec: true
-      mcommand.command.hat: true
-      mcommand.command.wb: true
-      mcommand.command.ping: true
-      mcommand.command.seen: true
-      mcommand.command.playtime: true
       mcommand.command.gm.survival: true
       mcommand.command.gm.creative: true
       mcommand.command.gm.adventure: true
       mcommand.command.gm.spectator: true
-  mcommand.command.fly:
+      mcommand.command.invsee: true
+      mcommand.command.endersee: true
+      mcommand.command.freeze: true
+      mcommand.command.unfreeze: true
+      mcommand.command.vanish: true
+      mcommand.command.sudo: true
+      mcommand.command.broadcast: true
+      mcommand.command.clearchat: true
+      mcommand.command.ec: true
+      mcommand.command.top: true
+      mcommand.command.back: true
+      mcommand.command.hat: true
+      mcommand.command.anvil: true
+      mcommand.command.wb: true
+      mcommand.command.grindstone: true
+      mcommand.command.cartography: true
+      mcommand.command.loom: true
+      mcommand.command.smithing: true
+      mcommand.command.clear: true
+      mcommand.command.skull: true
+      mcommand.command.itemname: true
+      mcommand.command.lore: true
+      mcommand.command.tp: true
+      mcommand.command.tphere: true
+      mcommand.command.tppos: true
+      mcommand.command.tpall: true
+      mcommand.command.day: true
+      mcommand.command.night: true
+      mcommand.command.sun: true
+      mcommand.command.rain: true
+      mcommand.command.ping: true
+      mcommand.command.seen: true
+      mcommand.command.playtime: true
+      mcommand.command.near: true
+      mcommand.command.whois: true
+  mcommand.command.sudo.self: { default: op }
+  mcommand.command.sudo.other: { default: op }
+  mcommand.command.sudo.console: { default: op }
+  mcommand.command.invsee.modify: { default: op }
+  mcommand.command.invsee.offline: { default: op }
+  mcommand.command.gm.other: { default: op }
+  mcommand.command.clear.other: { default: op }
+  mcommand.command.tp.other: { default: op }
+  mcommand.command.vanish.other: { default: op }
+  mcommand.command.whois.ip: { default: op }
+  mcommand.format.unsafe: { default: op }
+  mcommand.exempt.invsee: { default: false }
+  mcommand.exempt.sudo: { default: false }
+  mcommand.exempt.freeze: { default: false }
+  mcommand.exempt.bypass: { default: op }
+  mcommand.vanish.see: { default: op }
+  mcommand.command.speed.max.10:
+    description: Allow speed values up to 10
     default: op
-  mcommand.command.god:
-    default: op
-  mcommand.command.heal:
-    default: op
-  mcommand.command.feed:
-    default: op
-  mcommand.command.repair:
-    default: op
-  mcommand.command.speed:
-    default: op
-  mcommand.command.ext:
-    default: op
-  mcommand.command.invsee:
-    default: op
-  mcommand.command.ec:
-    default: op
-  mcommand.command.top:
-    default: op
-  mcommand.command.back:
-    default: op
-  mcommand.command.hat:
-    default: op
-  mcommand.command.anvil:
-    default: op
-  mcommand.command.wb:
-    default: op
-  mcommand.command.clear:
-    default: op
-  mcommand.command.skull:
-    default: op
-  mcommand.command.itemname:
-    default: op
-  mcommand.command.lore:
-    default: op
-  mcommand.command.sudo:
-    default: op
-  mcommand.command.day:
-    default: op
-  mcommand.command.night:
-    default: op
-  mcommand.command.sun:
-    default: op
-  mcommand.command.rain:
-    default: op
-  mcommand.command.ping:
-    default: op
-  mcommand.command.seen:
-    default: op
-  mcommand.command.playtime:
-    default: op
-  mcommand.command.broadcast:
-    default: op
-  mcommand.command.clearchat:
-    default: op
-  mcommand.command.gm.survival:
-    description: /gm 0 (survival)
-    default: op
-  mcommand.command.gm.creative:
-    description: /gm 1 (creative)
-    default: op
-  mcommand.command.gm.adventure:
-    description: /gm 2 (adventure)
-    default: op
-  mcommand.command.gm.spectator:
-    description: /gm 3 (spectator)
-    default: op
+    children:
+      mcommand.command.speed.max.9: true
+      mcommand.command.speed.max.8: true
+      mcommand.command.speed.max.7: true
+      mcommand.command.speed.max.6: true
+      mcommand.command.speed.max.5: true
+      mcommand.command.speed.max.4: true
+      mcommand.command.speed.max.3: true
+      mcommand.command.speed.max.2: true
+      mcommand.command.speed.max.1: true

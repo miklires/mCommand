@@ -32,7 +32,7 @@ public class ItemNameCommand extends AbstractMCommand {
         }
         String text = String.join(" ", args);
         ItemMeta meta = stack.getItemMeta();
-        meta.displayName(mm.deserialize(text).decoration(TextDecoration.ITALIC, false));
+        meta.displayName(parseUserText(sender, text).decoration(TextDecoration.ITALIC, false));
         stack.setItemMeta(meta);
         send(sender, "itemname-done");
     }

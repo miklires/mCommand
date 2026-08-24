@@ -21,10 +21,10 @@ public class BackCommand extends AbstractMCommand {
             send(sender, "back-none");
             return;
         }
-        Location current = player.getLocation();
         plugin.getBackLocationManager().save(player);
-        player.teleport(loc);
-        send(sender, "back-done");
+        player.teleportAsync(loc).thenAccept(success -> {
+            if (success) send(sender, "back-done");
+        });
     }
 }
 

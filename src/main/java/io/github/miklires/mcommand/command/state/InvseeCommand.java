@@ -24,6 +24,11 @@ public class InvseeCommand extends AbstractMCommand {
             send(sender, "player-not-found");
             return;
         }
+        if (target.hasPermission("mcommand.exempt.invsee")
+                && !sender.hasPermission("mcommand.exempt.bypass")) {
+            send(sender, "no-permission");
+            return;
+        }
         ((Player) sender).openInventory(target.getInventory());
     }
 }

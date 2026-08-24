@@ -2,6 +2,7 @@ package io.github.miklires.mcommand.command.state;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.GameMode;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,7 +28,7 @@ public class GamemodeCommand implements CommandExecutor {
             sender.sendMessage(mm.deserialize(prefix + plugin.getMessageUtil().get("disabled")));
             return true;
         }
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player) && args.length < 2) {
             sender.sendMessage(mm.deserialize(prefix + plugin.getMessageUtil().get("player-only")));
             return true;
         }
@@ -48,6 +49,20 @@ public class GamemodeCommand implements CommandExecutor {
             return true;
         }
 
+        Player player;
+        if (args.length >= 2) {
+            if (!sender.hasPermission("mcommand.command.gm.other")) {
+                sender.sendMessage(mm.deserialize(prefix + plugin.getMessageUtil().get("no-permission")));
+                return true;
+            }
+            player = Bukkit.getPlayerExact(args[1]);
+            if (player == null) {
+                sender.sendMessage(mm.deserialize(prefix + plugin.getMessageUtil().get("player-not-found")));
+                return true;
+            }
+        } else {
+            player = (Player) sender;
+        }
         player.setGameMode(mode);
         sender.sendMessage(mm.deserialize(prefix
                 + plugin.getMessageUtil().get("gm-set").replace("{mode}", localizedName(mode))));

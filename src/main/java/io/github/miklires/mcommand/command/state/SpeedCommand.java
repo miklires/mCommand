@@ -42,6 +42,11 @@ public class SpeedCommand extends AbstractMCommand {
             send(sender, "speed-range");
             return;
         }
+        int requested = (int) Math.ceil(value);
+        if (requested > 0 && !sender.hasPermission("mcommand.command.speed.max." + requested)) {
+            send(sender, "no-permission");
+            return;
+        }
         float scaled = value / 10f;
         if (mode.equals("fly")) {
             player.setFlySpeed(Math.min(1f, scaled));

@@ -1,3 +1,16 @@
+config-version: 1
+
+language:
+  default: en_US
+
+# Disabled modules do not register their commands, avoiding conflicts with larger suites.
+modules:
+  state: true
+  utils: true
+  moderation: true
+  world: false
+  info: true
+
 commands:
   fly: { enabled: true }
   god: { enabled: true }
@@ -6,18 +19,33 @@ commands:
   repair: { enabled: true }
   speed: { enabled: true }
   ext: { enabled: true }
+  gm: { enabled: true }
   invsee: { enabled: true }
+  endersee: { enabled: true }
+  freeze: { enabled: true }
+  unfreeze: { enabled: true }
+  vanish: { enabled: true }
+  sudo: { enabled: true }
+  broadcast: { enabled: true }
+  clearchat: { enabled: true }
   ec: { enabled: true }
   top: { enabled: true }
   back: { enabled: true }
   hat: { enabled: true }
   anvil: { enabled: true }
   wb: { enabled: true }
+  grindstone: { enabled: true }
+  cartography: { enabled: true }
+  loom: { enabled: true }
+  smithing: { enabled: true }
   clear: { enabled: true }
   skull: { enabled: true }
   itemname: { enabled: true }
   lore: { enabled: true }
-  sudo: { enabled: true }
+  tp: { enabled: true }
+  tphere: { enabled: true }
+  tppos: { enabled: true }
+  tpall: { enabled: true }
   day: { enabled: true }
   night: { enabled: true }
   sun: { enabled: true }
@@ -25,6 +53,17 @@ commands:
   ping: { enabled: true }
   seen: { enabled: true }
   playtime: { enabled: true }
-  broadcast: { enabled: true }
-  clearchat: { enabled: true }
-  gm: { enabled: true }
+  near: { enabled: true }
+  whois: { enabled: true }
+
+limits:
+  near-max-radius: 200
+  max-teleport-coordinate: 30000000
+
+metrics:
+  enabled: true
+  bstats-id: 33356
+
+updates:
+  enabled: true
+  modrinth-project-id: ""

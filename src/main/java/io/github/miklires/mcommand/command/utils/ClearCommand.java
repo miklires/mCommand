@@ -16,6 +16,7 @@ public class ClearCommand extends AbstractMCommand {
     protected void execute(CommandSender sender, String[] args) {
         Player target;
         if (args.length >= 1) {
+            if (!sender.hasPermission("mcommand.command.clear.other")) { send(sender, "no-permission"); return; }
             target = Bukkit.getPlayerExact(args[0]);
             if (target == null) { send(sender, "player-not-found"); return; }
         } else {
