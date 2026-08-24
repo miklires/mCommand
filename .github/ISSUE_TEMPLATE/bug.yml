@@ -1,0 +1,19 @@
+name: Bug report
+description: Report reproducible mCommand behavior
+title: "[Bug]: "
+body:
+  - type: input
+    id: version
+    attributes: { label: mCommand version }
+    validations: { required: true }
+  - type: input
+    id: platform
+    attributes: { label: Server platform and build }
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes: { label: Reproduction steps }
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes: { label: Relevant logs }
