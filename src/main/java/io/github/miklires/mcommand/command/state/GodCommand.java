@@ -22,6 +22,7 @@ public class GodCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
+        if (!requireOtherPermission(sender, target)) return;
         plugin.runFor(target, () -> {
             boolean newState = !target.isInvulnerable();
             target.setInvulnerable(newState);

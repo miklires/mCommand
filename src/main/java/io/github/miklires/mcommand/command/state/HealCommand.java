@@ -23,6 +23,7 @@ public class HealCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
+        if (!requireOtherPermission(sender, target)) return;
         plugin.runFor(target, () -> {
             var attribute = target.getAttribute(Attribute.MAX_HEALTH);
             double max = attribute == null ? 20 : attribute.getValue();

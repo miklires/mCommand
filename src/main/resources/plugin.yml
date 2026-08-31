@@ -18,6 +18,11 @@ permissions:
       mcommand.command.invsee.offline: true
       mcommand.command.gm.other: true
       mcommand.command.clear.other: true
+      mcommand.command.fly.other: true
+      mcommand.command.god.other: true
+      mcommand.command.heal.other: true
+      mcommand.command.feed.other: true
+      mcommand.command.ext.other: true
       mcommand.command.tp.other: true
       mcommand.command.vanish.other: true
       mcommand.command.whois.ip: true
@@ -84,6 +89,11 @@ permissions:
   mcommand.command.invsee.offline: { default: op }
   mcommand.command.gm.other: { default: op }
   mcommand.command.clear.other: { default: op }
+  mcommand.command.fly.other: { default: op }
+  mcommand.command.god.other: { default: op }
+  mcommand.command.heal.other: { default: op }
+  mcommand.command.feed.other: { default: op }
+  mcommand.command.ext.other: { default: op }
   mcommand.command.tp.other: { default: op }
   mcommand.command.vanish.other: { default: op }
   mcommand.command.whois.ip: { default: op }

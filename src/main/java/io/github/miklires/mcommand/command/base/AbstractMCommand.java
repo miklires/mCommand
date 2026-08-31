@@ -48,6 +48,12 @@ public abstract class AbstractMCommand implements CommandExecutor {
         return true;
     }
 
+    protected boolean requireOtherPermission(CommandSender sender, Player target) {
+        if (sender == target || sender.hasPermission("mcommand.command." + commandKey + ".other")) return true;
+        send(sender, "no-permission");
+        return false;
+    }
+
     protected void send(CommandSender sender, String key) {
         plugin.getMessageUtil().send(sender, key);
     }

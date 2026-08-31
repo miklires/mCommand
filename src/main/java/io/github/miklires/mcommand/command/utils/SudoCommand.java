@@ -22,8 +22,11 @@ public final class SudoCommand extends AbstractMCommand {
         }
         if (args[0].equalsIgnoreCase("console")) {
             if (!sender.hasPermission("mcommand.command.sudo.console")) { send(sender, "no-permission"); return; }
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-            send(sender, "sudo-done", "player", "console", "command", command);
+            plugin.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                plugin.getLogger().info(sender.getName() + " used sudo as console: /" + command);
+                plugin.runFor(sender, () -> send(sender, "sudo-done", "player", "console", "command", command));
+            });
             return;
         }
         Player target = Bukkit.getPlayerExact(args[0]);

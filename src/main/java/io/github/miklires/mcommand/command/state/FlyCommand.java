@@ -25,6 +25,7 @@ public class FlyCommand extends AbstractMCommand {
             if (!requirePlayer(sender)) return;
             target = (Player) sender;
         }
+        if (!requireOtherPermission(sender, target)) return;
         plugin.runFor(target, () -> {
             boolean newState = !target.getAllowFlight();
             target.setAllowFlight(newState);

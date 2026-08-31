@@ -91,7 +91,7 @@ public final class ModernCommand implements CommandExecutor {
             if (!sender.hasPermission("mcommand.command.tp.other")) { message(sender, "no-permission"); return true; }
             moving = target(sender, args, 0); destination = target(sender, args, 1);
         }
-        if (moving != null && destination != null) move(moving, destination.getLocation(), sender);
+        if (moving != null && destination != null) moveToPlayer(moving, destination, sender);
         return true;
     }
 
@@ -148,10 +148,15 @@ public final class ModernCommand implements CommandExecutor {
     }
 
     private void move(Player player, Location destination, CommandSender sender) {
-        plugin.getBackLocationManager().save(player);
-        player.teleportAsync(destination).thenAccept(success -> {
-            plugin.runFor(sender, () -> message(sender, success ? "teleport-done" : "teleport-failed"));
+        plugin.runFor(player, () -> {
+            plugin.getBackLocationManager().save(player);
+            player.teleportAsync(destination).thenAccept(success ->
+                    plugin.runFor(sender, () -> message(sender, success ? "teleport-done" : "teleport-failed")));
         });
+    }
+
+    private void moveToPlayer(Player moving, Player destination, CommandSender sender) {
+        plugin.runFor(destination, () -> move(moving, destination.getLocation().clone(), sender));
     }
 
     private Player player(CommandSender sender) {
