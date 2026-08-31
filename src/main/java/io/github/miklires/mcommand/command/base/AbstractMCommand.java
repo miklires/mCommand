@@ -49,15 +49,11 @@ public abstract class AbstractMCommand implements CommandExecutor {
     }
 
     protected void send(CommandSender sender, String key) {
-        sender.sendMessage(mm.deserialize(prefix() + msg(key)));
+        plugin.getMessageUtil().send(sender, key);
     }
 
     protected void send(CommandSender sender, String key, String... replacements) {
-        String s = msg(key);
-        for (int i = 0; i + 1 < replacements.length; i += 2) {
-            s = s.replace("{" + replacements[i] + "}", replacements[i + 1]);
-        }
-        sender.sendMessage(mm.deserialize(prefix() + s));
+        plugin.getMessageUtil().send(sender, key, replacements);
     }
 
     protected String prefix() { return plugin.getMessageUtil().prefix(); }

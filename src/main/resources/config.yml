@@ -1,4 +1,4 @@
-config-version: 1
+config-version: 2
 
 language:
   default: en_US
@@ -60,11 +60,16 @@ limits:
   near-max-radius: 200
   max-teleport-coordinate: 30000000
 
+moderation:
+  freeze:
+    # Frozen players may still ask for help or submit a report.
+    allowed-commands: [help, msg, tell, report]
+
 metrics:
   enabled: true
   bstats-id: 33356
 
 updates:
   enabled: true
-  modrinth-project-id: ""
+  modrinth-project-id: "mcommand"
   timeout-millis: 8000

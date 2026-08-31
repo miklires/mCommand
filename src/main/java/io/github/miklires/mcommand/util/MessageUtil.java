@@ -2,6 +2,9 @@ package io.github.miklires.mcommand.util;
 
 import io.github.miklires.mcommand.MCommand;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -23,9 +26,17 @@ public final class MessageUtil {
         }
         File selected = new File(plugin.getDataFolder(), "lang/" + safeLocale() + ".yml");
         messages = YamlConfiguration.loadConfiguration(selected);
-        var defaults = plugin.getResource("lang/en_US.yml");
-        if (defaults != null) messages.setDefaults(YamlConfiguration.loadConfiguration(
-                new InputStreamReader(defaults, StandardCharsets.UTF_8)));
+        mergeBundled("lang/" + safeLocale() + ".yml");
+        mergeBundled("lang/en_US.yml");
+    }
+
+    private void mergeBundled(String resource) {
+        var stream = plugin.getResource(resource);
+        if (stream == null) return;
+        YamlConfiguration bundled = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(stream, StandardCharsets.UTF_8));
+        bundled.getKeys(true).stream().filter(key -> !bundled.isConfigurationSection(key))
+                .filter(key -> !messages.contains(key)).forEach(key -> messages.set(key, bundled.get(key)));
     }
 
     private String safeLocale() {
@@ -41,5 +52,17 @@ public final class MessageUtil {
 
     public String get(String key) { return messages.getString(key, key); }
     public String prefix() { return get("prefix"); }
-    public void send(CommandSender sender, String key) { sender.sendMessage(miniMessage.deserialize(prefix() + get(key))); }
+    public Component component(String key, String... replacements) {
+        String template = prefix() + get(key);
+        TagResolver.Builder resolver = TagResolver.builder();
+        for (int index = 0; index + 1 < replacements.length; index += 2) {
+            String name = replacements[index];
+            template = template.replace("{" + name + "}", "<" + name + ">");
+            resolver.resolver(Placeholder.unparsed(name, replacements[index + 1]));
+        }
+        return miniMessage.deserialize(template, resolver.build());
+    }
+    public void send(CommandSender sender, String key, String... replacements) {
+        sender.sendMessage(component(key, replacements));
+    }
 }
