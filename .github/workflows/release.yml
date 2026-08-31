@@ -17,7 +17,7 @@ jobs:
           distribution: temurin
           java-version: '25'
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew clean build --no-daemon
+      - run: chmod +x gradlew && ./gradlew clean build --no-daemon
       - name: Update Modrinth project metadata
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
@@ -30,6 +30,9 @@ jobs:
             categories: ["management", "utility"],
             source_url: "https://github.com/miklires/mCommand",
             issues_url: "https://github.com/miklires/mCommand/issues",
+            wiki_url: "https://miklires.su/wiki/mcommand",
+            discord_url: "https://discord.gg/pes25cnWKy",
+            donation_urls: [{id: "other", platform: "Other", url: "https://miklires.su/support"}],
             license_id: "MIT"
           }' > modrinth-project.json
           curl --fail-with-body --request PATCH \
@@ -43,4 +46,5 @@ jobs:
           MODRINTH_PROJECT_ID: ${{ secrets.MODRINTH_PROJECT_ID }}
       - uses: softprops/action-gh-release@v3
         with:
-          files: build/libs/mCommand-1.0.1.jar
+          files: build/libs/mCommand-1.1.0.jar
+          body_path: CHANGELOG.md

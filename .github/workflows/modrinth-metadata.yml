@@ -1,0 +1,66 @@
+name: modrinth metadata
+
+on:
+  workflow_dispatch:
+    inputs:
+      submit-review:
+        description: Request public approval
+        required: true
+        type: boolean
+        default: false
+      version-id:
+        description: Optional Modrinth version ID to normalize
+        required: false
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Update project metadata
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          MODRINTH_PROJECT_ID: ${{ secrets.MODRINTH_PROJECT_ID }}
+          SUBMIT_REVIEW: ${{ inputs.submit-review }}
+        run: |
+          jq -n --rawfile body README.md --argjson submit "$SUBMIT_REVIEW" '{
+            title: "mCommand",
+            description: "Lightweight modular administration commands for Paper, Purpur, and Folia.",
+            body: $body,
+            categories: ["management", "utility"],
+            source_url: "https://github.com/miklires/mCommand",
+            issues_url: "https://github.com/miklires/mCommand/issues",
+            wiki_url: "https://miklires.su/wiki/mcommand",
+            discord_url: "https://discord.gg/pes25cnWKy",
+            donation_urls: [{id: "other", platform: "Other", url: "https://miklires.su/support"}],
+            license_id: "MIT"
+          } + (if $submit then {requested_status: "approved"} else {} end)' > modrinth-project.json
+          curl --fail-with-body --request PATCH \
+            --header "Authorization: $MODRINTH_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-binary @modrinth-project.json \
+            "https://api.modrinth.com/v2/project/$MODRINTH_PROJECT_ID"
+      - name: Update telemetry disclosure
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          MODRINTH_PROJECT_ID: ${{ secrets.MODRINTH_PROJECT_ID }}
+        run: |
+          jq -n '{set: [{type: "telemetry", consent: "opt_out", data_collected: ["https://bstats.org/docs/server-owners"]}], remove: []}' \
+            | curl --fail-with-body --request PATCH \
+              --header "Authorization: $MODRINTH_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data-binary @- \
+              "https://api.modrinth.com/v3/project/$MODRINTH_PROJECT_ID/disclosures"
+      - name: Normalize version metadata
+        if: inputs.version-id != ''
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          VERSION_ID: ${{ inputs.version-id }}
+        run: |
+          jq -n '{name: "mCommand 1.1.0", version_number: "1.1.0", version_type: "release", featured: true, game_versions: ["26.2"], loaders: ["paper", "purpur", "folia"]}' > modrinth-version.json
+          curl --fail-with-body --request PATCH \
+            --header "Authorization: $MODRINTH_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-binary @modrinth-version.json \
+            "https://api.modrinth.com/v2/version/$VERSION_ID"

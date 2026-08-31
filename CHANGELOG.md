@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.1.0 - 2026-08-31
+
+### Added
+
+- permission-aware `/staff <player>` menu and `/serverinfo` performance diagnostics
+- persistent freeze and vanish states with atomic storage
+- configurable allowed commands for frozen players and input-size limits
+- English and Russian messages for every command path, with missing-key fallback for existing installations
+
+### Changed
+
+- configuration schema upgraded to version 2 while preserving administrator values
+- freeze now blocks movement, interaction, inventory actions, drops, pickups, damage, and unapproved commands
+- vanish now persists, suppresses join and quit messages, blocks pickups and mob targeting, and restores visibility rules on join
+- player and world mutations use entity/global schedulers for Paper and Folia ownership
+
+### Security
+
+- split self and other-player permissions for fly, god, heal, feed, and extinguish
+- added sudo audit logging and global-region console execution
+- bounded broadcast, sudo, item-name, and lore input using Unicode code points
+- removed blocking lookups for unknown offline player names
+
 ## 1.0.1 - 2026-08-24
 
 ### Fixed

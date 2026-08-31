@@ -26,12 +26,14 @@ mCommand is designed for servers that only need a focused administration toolkit
 ## What it does
 
 - state tools: flight, god mode, heal, feed, repair, speed, extinguish, and game mode
-- moderation: inventory and ender chest inspection, freeze, vanish, safe sudo, broadcast, and chat clearing
+- moderation: permission-aware staff GUI, inventory and ender chest inspection, persistent freeze and vanish, audited sudo, broadcast, and chat clearing
 - teleportation: back, top, player teleport, teleport-here, coordinates, and confirmed teleport-all
 - information: ping, last seen, playtime, nearby players, and privacy-aware whois
 - portable workstations: crafting table, anvil, grindstone, cartography table, loom, and smithing table
 - safe item names and lore with restricted MiniMessage tags unless an elevated formatting permission is granted
 - persistent `/back` locations written outside the server tick
+- `/serverinfo` TPS, MSPT, player, world, and memory diagnostics
+- configurable input limits for broadcasts, sudo commands, item names, and lore
 
 ## Requirements
 
@@ -42,7 +44,7 @@ Velocity is not required and no proxy artifact is included.
 
 ## Install
 
-1. Put `mCommand-1.0.1.jar` in the server's `plugins` directory.
+1. Put `mCommand-1.1.0.jar` in the server's `plugins` directory.
 2. Start the server once.
 3. Edit `plugins/mCommand/config.yml` and restart when changing command modules.
 
@@ -52,15 +54,15 @@ English is the default language. Set `language.default: ru_RU` for the bundled R
 
 The `state`, `utils`, `moderation`, `world`, and `info` modules can be toggled independently. A disabled module does not register its commands, so those literals and suggestions disappear and another plugin can own them. Individual commands have a second `commands.<name>.enabled` switch.
 
-`limits.near-max-radius` caps `/near`; `limits.max-teleport-coordinate` validates `/tppos`. `/mcommand reload` safely reloads messages and limits, but command registration changes require a restart.
+`limits.near-max-radius` caps `/near`; `limits.max-teleport-coordinate` validates `/tppos`. Length limits protect broadcast, sudo, item-name, and lore input. `moderation.freeze.allowed-commands` keeps help and reporting available to frozen players. `/mcommand reload` safely reloads messages and limits, but command registration changes require a restart.
 
 ## Commands
 
 - state: `/fly`, `/god`, `/heal`, `/feed`, `/repair`, `/speed`, `/ext`, `/gm`
-- moderation: `/invsee`, `/endersee`, `/freeze`, `/unfreeze`, `/vanish`, `/sudo`, `/broadcast`, `/clearchat`
+- moderation: `/staff <player>`, `/invsee`, `/endersee`, `/freeze`, `/unfreeze`, `/vanish`, `/sudo`, `/broadcast`, `/clearchat`
 - teleport and utilities: `/tp`, `/tphere`, `/tppos`, `/tpall confirm`, `/back`, `/top`, `/hat`, `/clear`, `/skull`, `/itemname`, `/lore`
 - workstations: `/wb`, `/anvil`, `/grindstone`, `/cartography`, `/loom`, `/smithing`
-- information: `/ping`, `/seen`, `/playtime`, `/near [radius]`, `/whois <player>`
+- information: `/ping`, `/seen`, `/playtime`, `/near [radius]`, `/whois <player>`, `/serverinfo`
 - optional world module: `/day`, `/night`, `/sun`, `/rain`
 - administration: `/mcommand reload`
 
@@ -73,6 +75,7 @@ Brigadier supplies command syntax and online-player suggestions. Commands that a
 - `mcommand.command.sudo.self`, `.other`, `.console`; `mcommand.exempt.sudo`
 - `mcommand.command.invsee.modify`, `.offline`; `mcommand.exempt.invsee`
 - `mcommand.command.gm.other`, `mcommand.command.clear.other`, `mcommand.command.tp.other`
+- `mcommand.command.fly.other`, `.god.other`, `.heal.other`, `.feed.other`, `.ext.other`
 - `mcommand.command.vanish.other`, `mcommand.vanish.see`
 - `mcommand.command.whois.ip` for full IP addresses
 - `mcommand.command.speed.max.<1-10>` for speed ceilings
@@ -93,4 +96,4 @@ The update setting is separate from telemetry. Disable update discovery with `up
 ./gradlew clean build
 ```
 
-The release JAR is written to `build/libs/mCommand-1.0.1.jar`. The project is licensed under the MIT License.
+The release JAR is written to `build/libs/mCommand-1.1.0.jar`. The project is licensed under the MIT License.
