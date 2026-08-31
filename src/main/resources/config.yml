@@ -61,6 +61,11 @@ commands:
 limits:
   near-max-radius: 200
   max-teleport-coordinate: 30000000
+  broadcast-length: 512
+  sudo-command-length: 256
+  item-name-length: 128
+  lore-line-length: 256
+  lore-lines: 50
 
 moderation:
   freeze:

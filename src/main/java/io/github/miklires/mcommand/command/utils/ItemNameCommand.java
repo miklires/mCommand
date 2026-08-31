@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import io.github.miklires.mcommand.MCommand;
 import io.github.miklires.mcommand.command.base.AbstractMCommand;
+import io.github.miklires.mcommand.util.CommandSafety;
 
 public class ItemNameCommand extends AbstractMCommand {
 
@@ -31,6 +32,10 @@ public class ItemNameCommand extends AbstractMCommand {
             return;
         }
         String text = String.join(" ", args);
+        if (!CommandSafety.isLengthAllowed(text, plugin.getConfigManager().maxItemNameLength())) {
+            send(sender, "input-too-long", "max", Integer.toString(plugin.getConfigManager().maxItemNameLength()));
+            return;
+        }
         ItemMeta meta = stack.getItemMeta();
         meta.displayName(parseUserText(sender, text).decoration(TextDecoration.ITALIC, false));
         stack.setItemMeta(meta);

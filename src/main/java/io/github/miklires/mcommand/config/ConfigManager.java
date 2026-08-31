@@ -48,6 +48,11 @@ public final class ConfigManager {
     public int updateTimeoutMillis() { return (int) range("updates.timeout-millis", 8000, 500, 60000); }
     public double maxNearRadius() { return range("limits.near-max-radius", 200, 1, 5000); }
     public double maxTeleportCoordinate() { return range("limits.max-teleport-coordinate", 30_000_000, 1000, 30_000_000); }
+    public int maxBroadcastLength() { return (int) range("limits.broadcast-length", 512, 1, 4096); }
+    public int maxSudoLength() { return (int) range("limits.sudo-command-length", 256, 1, 2048); }
+    public int maxItemNameLength() { return (int) range("limits.item-name-length", 128, 1, 1024); }
+    public int maxLoreLineLength() { return (int) range("limits.lore-line-length", 256, 1, 2048); }
+    public int maxLoreLines() { return (int) range("limits.lore-lines", 50, 1, 100); }
     public Set<String> freezeAllowedCommands() {
         return plugin.getConfig().getStringList("moderation.freeze.allowed-commands").stream()
                 .map(value -> value.toLowerCase(Locale.ROOT).replaceFirst("^/", ""))

@@ -51,6 +51,8 @@ staff-vanish-lore: "<gray>Переключить сохраняемое сост
 staff-teleport: "<yellow>Телепортироваться к игроку"
 staff-teleport-lore: "<gray>Текущая позиция сохраняется для /back."
 no-item-in-hand: "<red>Возьмите предмет в руку."
+input-too-long: "<red>Слишком длинный ввод. Максимум: {max} символов."
+lore-too-many: "<red>У предмета уже максимальное количество строк lore: {max}."
 reloaded: "<color:#7CB342>Конфиги перезагружены."
 broadcast-format: "<gold>[BROADCAST]</gold> <white>{message}"
 

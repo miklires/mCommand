@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import io.github.miklires.mcommand.MCommand;
 import io.github.miklires.mcommand.command.base.AbstractMCommand;
+import io.github.miklires.mcommand.util.CommandSafety;
 
 public class BroadcastCommand extends AbstractMCommand {
 
@@ -19,6 +20,10 @@ public class BroadcastCommand extends AbstractMCommand {
             return;
         }
         String text = String.join(" ", args);
+        if (!CommandSafety.isLengthAllowed(text, plugin.getConfigManager().maxBroadcastLength())) {
+            send(sender, "input-too-long", "max", Integer.toString(plugin.getConfigManager().maxBroadcastLength()));
+            return;
+        }
         String template = plugin.getMessageUtil().get("broadcast-format").replace("{message}", "<message>");
         Bukkit.broadcast(mm.deserialize(template, Placeholder.component("message", parseUserText(sender, text))));
     }

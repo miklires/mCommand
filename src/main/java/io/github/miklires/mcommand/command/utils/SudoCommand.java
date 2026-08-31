@@ -17,7 +17,8 @@ public final class SudoCommand extends AbstractMCommand {
     protected void execute(CommandSender sender, String[] args) {
         if (args.length < 2) { send(sender, "sudo-usage"); return; }
         String command = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).replaceFirst("^/", "");
-        if (!CommandSafety.isSingleCommand(command)) {
+        if (!CommandSafety.isSingleCommand(command)
+                || !CommandSafety.isLengthAllowed(command, plugin.getConfigManager().maxSudoLength())) {
             send(sender, "sudo-usage"); return;
         }
         if (args[0].equalsIgnoreCase("console")) {

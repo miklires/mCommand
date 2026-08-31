@@ -23,4 +23,11 @@ class CommandSafetyTest {
         assertFalse(CommandSafety.areCoordinatesAllowed(1001, 64, 0, 1000, -64, 320));
         assertFalse(CommandSafety.areCoordinatesAllowed(0, 321, 0, 1000, -64, 320));
     }
+
+    @Test void countsUnicodeCodePointsForInputLimits() {
+        assertTrue(CommandSafety.isLengthAllowed("ab😀", 3));
+        assertFalse(CommandSafety.isLengthAllowed("ab😀", 2));
+        assertFalse(CommandSafety.isLengthAllowed(null, 10));
+        assertFalse(CommandSafety.isLengthAllowed("value", 0));
+    }
 }
