@@ -37,9 +37,11 @@ public final class SudoCommand extends AbstractMCommand {
             send(sender, "sudo-privilege-refused");
             return;
         }
-        target.performCommand(command);
-        plugin.getLogger().info(sender.getName() + " used sudo as " + target.getName() + ": /" + command);
-        send(sender, "sudo-done", "player", target.getName(), "command", command);
+        plugin.runFor(target, () -> {
+            target.performCommand(command);
+            plugin.getLogger().info(sender.getName() + " used sudo as " + target.getName() + ": /" + command);
+            plugin.runFor(sender, () -> send(sender, "sudo-done", "player", target.getName(), "command", command));
+        });
     }
 
     private boolean hasPermissionTargetDoesNotShare(CommandSender sender, Player target) {

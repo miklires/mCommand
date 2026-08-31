@@ -23,7 +23,7 @@ public class BackCommand extends AbstractMCommand {
         }
         plugin.getBackLocationManager().save(player);
         player.teleportAsync(loc).thenAccept(success -> {
-            if (success) send(sender, "back-done");
+            plugin.runFor(sender, () -> send(sender, success ? "back-done" : "teleport-failed"));
         });
     }
 }

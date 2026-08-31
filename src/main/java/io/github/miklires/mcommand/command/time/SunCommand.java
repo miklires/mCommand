@@ -15,10 +15,12 @@ public class SunCommand extends AbstractMCommand {
     @Override
     protected void execute(CommandSender sender, String[] args) {
         World world = sender instanceof Player p ? p.getWorld() : plugin.getServer().getWorlds().get(0);
-        world.setStorm(false);
-        world.setThundering(false);
-        world.setWeatherDuration(20 * 60 * 20);
-        send(sender, "sun-done");
+        plugin.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+            world.setStorm(false);
+            world.setThundering(false);
+            world.setWeatherDuration(20 * 60 * 20);
+            plugin.runFor(sender, () -> send(sender, "sun-done"));
+        });
     }
 }
 

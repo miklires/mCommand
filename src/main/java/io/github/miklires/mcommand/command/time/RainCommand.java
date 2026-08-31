@@ -15,9 +15,11 @@ public class RainCommand extends AbstractMCommand {
     @Override
     protected void execute(CommandSender sender, String[] args) {
         World world = sender instanceof Player p ? p.getWorld() : plugin.getServer().getWorlds().get(0);
-        world.setStorm(true);
-        world.setWeatherDuration(20 * 60 * 10);
-        send(sender, "rain-done");
+        plugin.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+            world.setStorm(true);
+            world.setWeatherDuration(20 * 60 * 10);
+            plugin.runFor(sender, () -> send(sender, "rain-done"));
+        });
     }
 }
 

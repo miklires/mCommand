@@ -15,8 +15,10 @@ public class DayCommand extends AbstractMCommand {
     @Override
     protected void execute(CommandSender sender, String[] args) {
         World world = sender instanceof Player p ? p.getWorld() : plugin.getServer().getWorlds().get(0);
-        world.setTime(1000);
-        send(sender, "day-done");
+        plugin.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+            world.setTime(1000);
+            plugin.runFor(sender, () -> send(sender, "day-done"));
+        });
     }
 }
 

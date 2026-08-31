@@ -29,9 +29,8 @@ public class FlyCommand extends AbstractMCommand {
             boolean newState = !target.getAllowFlight();
             target.setAllowFlight(newState);
             target.setFlying(newState);
-            send(sender, newState ? "fly-on" : "fly-off", "player", target.getName());
-            if (target != sender) target.sendMessage(mm.deserialize(prefix() + msg(newState ? "fly-on" : "fly-off")
-                    .replace("{player}", target.getName())));
+            plugin.runFor(sender, () -> send(sender, newState ? "fly-on" : "fly-off", "player", target.getName()));
+            if (target != sender) plugin.getMessageUtil().send(target, newState ? "fly-on" : "fly-off", "player", target.getName());
         });
     }
 }

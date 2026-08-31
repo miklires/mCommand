@@ -9,6 +9,7 @@ import io.github.miklires.mcommand.listener.BackTrackingListener;
 import io.github.miklires.mcommand.listener.PlayerStateListener;
 import io.github.miklires.mcommand.util.MessageUtil;
 import io.github.miklires.mcommand.update.UpdateChecker;
+import io.github.miklires.mcommand.gui.StaffMenu;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
@@ -20,6 +21,7 @@ public final class MCommand extends JavaPlugin {
     private PlayerStateManager playerStateManager;
     private MessageUtil messageUtil;
     private ModernCommand modernCommand;
+    private StaffMenu staffMenu;
 
     @Override
     public void onEnable() {
@@ -29,8 +31,10 @@ public final class MCommand extends JavaPlugin {
         backLocationManager = new BackLocationManager(this);
         playerStateManager = new PlayerStateManager(this);
         modernCommand = new ModernCommand(this);
+        staffMenu = new StaffMenu(this);
         getServer().getPluginManager().registerEvents(new BackTrackingListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerStateListener(this), this);
+        getServer().getPluginManager().registerEvents(staffMenu, this);
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
                 event -> new BrigadierCommands(this).register(event.registrar()));
         if (configManager.isMetricsEnabled() && configManager.getBstatsId() > 0) {
@@ -53,6 +57,7 @@ public final class MCommand extends JavaPlugin {
     public PlayerStateManager getPlayerStateManager() { return playerStateManager; }
     public MessageUtil getMessageUtil() { return messageUtil; }
     public ModernCommand getModernCommand() { return modernCommand; }
+    public StaffMenu getStaffMenu() { return staffMenu; }
     public void runFor(Player player, Runnable task) {
         player.getScheduler().execute(this, task, null, 1L);
     }

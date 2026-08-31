@@ -55,6 +55,8 @@ commands:
   playtime: { enabled: true }
   near: { enabled: true }
   whois: { enabled: true }
+  serverinfo: { enabled: true }
+  staff: { enabled: true }
 
 limits:
   near-max-radius: 200

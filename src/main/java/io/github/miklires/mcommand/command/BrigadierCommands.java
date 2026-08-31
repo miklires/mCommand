@@ -9,6 +9,8 @@ import io.github.miklires.mcommand.command.chat.ClearChatCommand;
 import io.github.miklires.mcommand.command.info.PingCommand;
 import io.github.miklires.mcommand.command.info.PlaytimeCommand;
 import io.github.miklires.mcommand.command.info.SeenCommand;
+import io.github.miklires.mcommand.command.info.ServerInfoCommand;
+import io.github.miklires.mcommand.command.moderation.StaffCommand;
 import io.github.miklires.mcommand.command.state.*;
 import io.github.miklires.mcommand.command.time.*;
 import io.github.miklires.mcommand.command.utils.*;
@@ -43,6 +45,8 @@ public final class BrigadierCommands {
         legacy.put("seen", new SeenCommand(plugin)); legacy.put("playtime", new PlaytimeCommand(plugin));
         legacy.put("broadcast", new BroadcastCommand(plugin)); legacy.put("clearchat", new ClearChatCommand(plugin));
         legacy.put("gm", new GamemodeCommand(plugin));
+        legacy.put("serverinfo", new ServerInfoCommand(plugin));
+        legacy.put("staff", new StaffCommand(plugin));
 
         legacy.forEach((name, executor) -> register(commands, name, executor, aliases(name)));
         for (String name : List.of("near", "whois", "endersee", "tp", "tphere", "tppos", "tpall",
@@ -111,7 +115,7 @@ public final class BrigadierCommands {
         AdminCommand(MCommand plugin) { this.plugin = plugin; }
         @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
             if (args.length == 0) {
-                sender.sendMessage("mCommand " + plugin.getPluginMeta().getVersion());
+                plugin.getMessageUtil().send(sender, "version", "version", plugin.getPluginMeta().getVersion());
                 return true;
             }
             if (!sender.hasPermission("mcommand.admin")) { plugin.getMessageUtil().send(sender, "no-permission"); return true; }

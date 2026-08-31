@@ -23,7 +23,8 @@ public class SkullCommand extends AbstractMCommand {
             send(sender, "skull-usage");
             return;
         }
-        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+        OfflinePlayer target = Bukkit.getOfflinePlayerIfCached(args[0]);
+        if (target == null) { send(sender, "player-never-played"); return; }
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
         meta.setOwningPlayer(target);

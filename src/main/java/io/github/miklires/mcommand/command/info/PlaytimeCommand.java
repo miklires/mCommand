@@ -18,7 +18,8 @@ public class PlaytimeCommand extends AbstractMCommand {
     protected void execute(CommandSender sender, String[] args) {
         OfflinePlayer target;
         if (args.length >= 1) {
-            target = Bukkit.getOfflinePlayer(args[0]);
+            target = Bukkit.getOfflinePlayerIfCached(args[0]);
+            if (target == null) { send(sender, "player-never-played"); return; }
             if (!target.hasPlayedBefore() && !target.isOnline()) {
                 send(sender, "player-never-played");
                 return;

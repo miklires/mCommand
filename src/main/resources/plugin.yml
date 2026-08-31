@@ -75,6 +75,8 @@ permissions:
       mcommand.command.playtime: true
       mcommand.command.near: true
       mcommand.command.whois: true
+      mcommand.command.serverinfo: true
+      mcommand.command.staff: true
   mcommand.command.sudo.self: { default: op }
   mcommand.command.sudo.other: { default: op }
   mcommand.command.sudo.console: { default: op }

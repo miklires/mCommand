@@ -15,8 +15,10 @@ public class NightCommand extends AbstractMCommand {
     @Override
     protected void execute(CommandSender sender, String[] args) {
         World world = sender instanceof Player p ? p.getWorld() : plugin.getServer().getWorlds().get(0);
-        world.setTime(14000);
-        send(sender, "night-done");
+        plugin.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
+            world.setTime(14000);
+            plugin.runFor(sender, () -> send(sender, "night-done"));
+        });
     }
 }
 

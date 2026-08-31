@@ -66,9 +66,9 @@ public final class ConfigManager {
     private String moduleFor(String key) {
         return switch (key.toLowerCase(Locale.ROOT)) {
             case "fly", "god", "heal", "feed", "repair", "speed", "ext", "gm" -> "state";
-            case "invsee", "endersee", "freeze", "unfreeze", "vanish", "sudo", "broadcast", "clearchat" -> "moderation";
+            case "invsee", "endersee", "freeze", "unfreeze", "vanish", "sudo", "broadcast", "clearchat", "staff" -> "moderation";
             case "day", "night", "sun", "rain" -> "world";
-            case "ping", "seen", "playtime", "near", "whois" -> "info";
+            case "ping", "seen", "playtime", "near", "whois", "serverinfo" -> "info";
             default -> "utils";
         };
     }

@@ -52,8 +52,14 @@ public final class MessageUtil {
 
     public String get(String key) { return messages.getString(key, key); }
     public String prefix() { return get("prefix"); }
+    public Component body(String key, String... replacements) {
+        return render(get(key), replacements);
+    }
     public Component component(String key, String... replacements) {
-        String template = prefix() + get(key);
+        return render(prefix() + get(key), replacements);
+    }
+    private Component render(String input, String... replacements) {
+        String template = input;
         TagResolver.Builder resolver = TagResolver.builder();
         for (int index = 0; index + 1 < replacements.length; index += 2) {
             String name = replacements[index];

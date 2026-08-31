@@ -25,9 +25,8 @@ public class GodCommand extends AbstractMCommand {
         plugin.runFor(target, () -> {
             boolean newState = !target.isInvulnerable();
             target.setInvulnerable(newState);
-            send(sender, newState ? "god-on" : "god-off", "player", target.getName());
-            if (target != sender) target.sendMessage(mm.deserialize(prefix() + msg(newState ? "god-on" : "god-off")
-                    .replace("{player}", target.getName())));
+            plugin.runFor(sender, () -> send(sender, newState ? "god-on" : "god-off", "player", target.getName()));
+            if (target != sender) plugin.getMessageUtil().send(target, newState ? "god-on" : "god-off", "player", target.getName());
         });
     }
 }

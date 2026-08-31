@@ -21,7 +21,8 @@ public class SeenCommand extends AbstractMCommand {
             send(sender, "seen-usage");
             return;
         }
-        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+        OfflinePlayer target = Bukkit.getOfflinePlayerIfCached(args[0]);
+        if (target == null) { send(sender, "player-never-played"); return; }
         if (!target.hasPlayedBefore() && !target.isOnline()) {
             send(sender, "player-never-played");
             return;
