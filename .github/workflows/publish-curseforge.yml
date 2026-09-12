@@ -1,65 +1,170 @@
-name: Publish latest release to CurseForge
+name: Build and publish mSuite to CurseForge
 
 on:
   workflow_dispatch:
+    inputs:
+      bundle_version:
+        description: Bundle version, for example 2026.09.12
+        required: true
+        type: string
+      publish:
+        description: Upload the verified bundle to the single mSuite CurseForge project
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
 jobs:
-  publish:
+  bundle:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
+      BUNDLE_VERSION: ${{ inputs.bundle_version }}
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
       CURSEFORGE_PROJECT_ID: ${{ secrets.CURSEFORGE_PROJECT_ID }}
-      PROJECT_NAME: mCommand
-      PRIMARY_BASENAME: mCommand
-      GAME_VERSION_NAMES: 26.2,Server,Paper,Purpur,Folia,Java 25
+      GAME_VERSION_NAMES: 26.2,Server,Paper,Purpur,Folia,Velocity,Java 25
     steps:
       - uses: actions/checkout@v5
 
-      - name: Download and publish latest release
+      - name: Assemble installable plugin bundle
         shell: bash
         run: |
           set -euo pipefail
-          test -n "$CURSEFORGE_TOKEN"
-          [[ "$CURSEFORGE_PROJECT_ID" =~ ^[0-9]+$ ]]
+          [[ "$BUNDLE_VERSION" =~ ^[0-9]+([.][0-9]+){2}([-._][A-Za-z0-9]+)?$ ]]
 
-          gh api "repos/$GITHUB_REPOSITORY/releases/latest" > release.json
-          tag="$(jq -r '.tag_name' release.json)"
-          version="${tag#v}"
-          mkdir -p release-assets
-          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern '*.jar' --dir release-assets
-          primary="release-assets/$PRIMARY_BASENAME-$version.jar"
-          test -f "$primary"
+          root="mSuite-$BUNDLE_VERSION"
+          mkdir -p "$root/paper" "$root/velocity" release-assets
+          : > components.tsv
 
-          auth="X-Api-Token: $CURSEFORGE_TOKEN"
-          api="https://minecraft.curseforge.com/api"
-          agent="User-Agent: miklires/$PROJECT_NAME/curseforge-publisher"
-          curl --fail-with-body --silent --show-error --header "$auth" --header "$agent" "$api/game/versions" > curseforge-game-versions.json
+          repos=(
+            mAuction mAuth mBadges mBans mCases mChat mClans mCodes mColor
+            mCommand mCraft mEvents mMotd mProfile mProtect mReports mReputation
+          )
+
+          for repo in "${repos[@]}"; do
+            release_dir="release-assets/$repo"
+            mkdir -p "$release_dir"
+            release_json="$release_dir/release.json"
+            gh api "repos/miklires/$repo/releases/latest" > "$release_json"
+            tag="$(jq -r '.tag_name' "$release_json")"
+            version="${tag#v}"
+            gh release download "$tag" \
+              --repo "miklires/$repo" \
+              --pattern '*.jar' \
+              --dir "$release_dir"
+
+            primary="$release_dir/$repo-$version.jar"
+            test -f "$primary"
+            cp "$primary" "$root/paper/"
+
+            case "$repo" in
+              mAuth)
+                for addon in Discord Telegram; do
+                  addon_jar="$release_dir/mAuth-$addon-$version.jar"
+                  test -f "$addon_jar"
+                  cp "$addon_jar" "$root/paper/"
+                done
+                velocity_jar="$release_dir/mAuth-Velocity-$version.jar"
+                test -f "$velocity_jar"
+                cp "$velocity_jar" "$root/velocity/"
+                ;;
+              mBans)
+                velocity_jar="$release_dir/mBans-Velocity-$version.jar"
+                test -f "$velocity_jar"
+                cp "$velocity_jar" "$root/velocity/"
+                ;;
+            esac
+
+            printf '%s\t%s\t%s\n' "$repo" "$version" "https://github.com/miklires/$repo/releases/tag/$tag" >> components.tsv
+          done
 
           python - <<'PY'
           import json
           import os
           from pathlib import Path
 
-          available = {entry["name"] for entry in json.loads(Path("curseforge-game-versions.json").read_text(encoding="utf-8"))}
-          wanted = [name.strip() for name in os.environ["GAME_VERSION_NAMES"].split(",") if name.strip()]
+          components = []
+          markdown = [
+              f"# mSuite {os.environ['BUNDLE_VERSION']}",
+              "",
+              "One CurseForge distribution containing the independently installable miklires server plugins.",
+              "Extract the archive and copy the required JARs from `paper/` and, when applicable, `velocity/`.",
+              "Individual downloads and source code remain available through the linked GitHub releases.",
+              "",
+              "## Included releases",
+              "",
+          ]
+          for line in Path("components.tsv").read_text(encoding="utf-8").splitlines():
+              name, version, url = line.split("\t")
+              components.append({"name": name, "version": version, "release": url})
+              markdown.append(f"- [{name} {version}]({url})")
+
+          root = Path(f"mSuite-{os.environ['BUNDLE_VERSION']}")
+          manifest = {
+              "name": "mSuite",
+              "bundleVersion": os.environ["BUNDLE_VERSION"],
+              "minecraft": "26.2",
+              "java": 25,
+              "components": components,
+          }
+          root.joinpath("manifest.json").write_text(
+              json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+          )
+          root.joinpath("README.md").write_text("\n".join(markdown) + "\n", encoding="utf-8")
+          Path("curseforge-changelog.md").write_text("\n".join(markdown) + "\n", encoding="utf-8")
+          PY
+
+          zip -r "mSuite-$BUNDLE_VERSION.zip" "$root"
+
+      - name: Upload bundle for verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: mSuite-${{ inputs.bundle_version }}
+          path: mSuite-${{ inputs.bundle_version }}.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish the single CurseForge project
+        if: ${{ inputs.publish }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CURSEFORGE_TOKEN"
+          [[ "$CURSEFORGE_PROJECT_ID" =~ ^[0-9]+$ ]]
+
+          auth="X-Api-Token: $CURSEFORGE_TOKEN"
+          api="https://minecraft.curseforge.com/api"
+          agent="User-Agent: miklires/mSuite/curseforge-publisher"
+          curl --fail-with-body --silent --show-error \
+            --header "$auth" \
+            --header "$agent" \
+            "$api/game/versions" > curseforge-game-versions.json
+
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          available = {
+              entry["name"]
+              for entry in json.loads(Path("curseforge-game-versions.json").read_text(encoding="utf-8"))
+          }
+          wanted = [
+              name.strip()
+              for name in os.environ["GAME_VERSION_NAMES"].split(",")
+              if name.strip()
+          ]
           selected = [name for name in wanted if name in available]
           if "26.2" not in selected:
               raise SystemExit("CurseForge does not currently expose Minecraft 26.2")
           Path("selected-game-versions.json").write_text(json.dumps(selected), encoding="utf-8")
-          print("CurseForge versions: " + ", ".join(selected))
           PY
 
-          changelog="$(jq -r '.body // empty' release.json)"
-          if [ -z "$changelog" ]; then
-            changelog="See the GitHub release notes: https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag"
-          fi
           jq -n \
-            --arg changelog "$changelog" \
-            --arg displayName "$PROJECT_NAME $version" \
+            --rawfile changelog curseforge-changelog.md \
+            --arg displayName "mSuite $BUNDLE_VERSION" \
             --slurpfile gameVersions selected-game-versions.json \
             '{changelog:$changelog,changelogType:"markdown",displayName:$displayName,gameVersionNames:$gameVersions[0],releaseType:"release",isMarkedForManualRelease:false}' \
             > curseforge-metadata.json
@@ -69,7 +174,7 @@ jobs:
             --header "$auth" \
             --header "$agent" \
             --form 'metadata=<curseforge-metadata.json' \
-            --form "file=@$primary" \
+            --form "file=@mSuite-$BUNDLE_VERSION.zip" \
             "$api/projects/$CURSEFORGE_PROJECT_ID/upload-file" \
             > curseforge-upload.json
 
