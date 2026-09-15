@@ -1,0 +1,117 @@
+name: Remove Folia banners from Modrinth descriptions
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Update long descriptions after reviewing the dry-run
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  descriptions:
+    runs-on: ubuntu-latest
+    env:
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      APPLY_CHANGES: ${{ inputs.apply }}
+    steps:
+      - name: Audit and remove only the Folia banner markup
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$MODRINTH_TOKEN"
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import urllib.error
+          import urllib.request
+
+          api = "https://api.modrinth.com/v2"
+          token = os.environ["MODRINTH_TOKEN"]
+          apply_changes = os.environ["APPLY_CHANGES"].lower() == "true"
+          expected = {
+              name.casefold(): name
+              for name in (
+                  "mAuction", "mAuth", "mBadges", "mBans", "mCases", "mChat",
+                  "mClans", "mCodes", "mColor", "mCommand", "mCraft",
+                  "mEvents", "mMotd", "mProfile", "mProtect", "mReports",
+                  "mReputation",
+              )
+          }
+
+          patterns = (
+              re.compile(
+                  r'(?im)^[ \t]*<a\b[^>]*href="https://papermc\.io/software/folia"[^>]*>'
+                  r'\s*<img\b[^>]*>\s*</a>[ \t]*\r?\n?'
+              ),
+              re.compile(
+                  r'(?im)^[ \t]*\[!\[Folia\]\(https://img\.shields\.io/badge/'
+                  r'Available_for-Folia-[^)]*\)\]\(https://papermc\.io/software/folia\)'
+                  r'[ \t]*\r?\n?'
+              ),
+              re.compile(
+                  r'(?im)^[ \t]*<p\s+align="center">\s*<img\b[^>]*'
+                  r'folia-available\.png[^>]*>\s*</p>[ \t]*\r?\n?'
+              ),
+          )
+          remaining_banner = re.compile(
+              r'folia-available\.png|folia_vector\.svg|Available_for-Folia',
+              re.IGNORECASE,
+          )
+
+          def request(method, path, payload=None):
+              data = None if payload is None else json.dumps(payload).encode("utf-8")
+              headers = {
+                  "Authorization": token,
+                  "User-Agent": "miklires/folia-banner-cleanup",
+                  "Accept": "application/json",
+              }
+              if data is not None:
+                  headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(api + path, data=data, headers=headers, method=method)
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  raw = response.read()
+                  return json.loads(raw) if raw else None
+
+          projects = request("GET", "/user/miklires/projects")
+          found = {
+              project["title"].casefold(): project
+              for project in projects
+              if project["title"].casefold() in expected
+          }
+          missing = sorted(set(expected) - set(found))
+          if missing:
+              print("Projects not visible to this token: " + ", ".join(expected[name] for name in missing))
+
+          planned = []
+          for key in sorted(found):
+              project = found[key]
+              body = project.get("body") or ""
+              cleaned = body
+              removed = 0
+              for pattern in patterns:
+                  cleaned, count = pattern.subn("", cleaned)
+                  removed += count
+              if remaining_banner.search(cleaned):
+                  raise SystemExit(f"Unrecognized Folia banner markup in {project['title']}; no update applied")
+              print(f"{project['title']}: status={project['status']}, banners={removed}, changed={cleaned != body}")
+              if cleaned != body:
+                  planned.append((project["id"], project["title"], cleaned))
+
+          print(f"Planned description-only updates: {len(planned)}; apply={apply_changes}")
+          if missing and apply_changes:
+              raise SystemExit("Not all expected projects are accessible; aborting before any write")
+
+          if apply_changes:
+              for project_id, title, cleaned in planned:
+                  request("PATCH", f"/project/{project_id}", {"body": cleaned})
+                  verified = request("GET", f"/project/{project_id}")
+                  if verified.get("body") != cleaned:
+                      raise SystemExit(f"Verification failed for {title}")
+                  print(f"Updated and verified: {title}")
+          PY
