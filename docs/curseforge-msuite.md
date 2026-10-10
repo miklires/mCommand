@@ -1,6 +1,6 @@
 # mSuite
 
-mSuite is the single CurseForge distribution for the independently installable miklires server plugins. The bundle targets Minecraft 26.2, Java 25, Paper, Purpur, and Folia. Optional proxy modules target Velocity.
+mSuite is the single CurseForge distribution for the independently installable miklires server plugins. The bundle targets Minecraft 26.3, Java 25, Paper, Purpur, and Folia. Optional proxy modules target Velocity.
 
 ## Installation
 

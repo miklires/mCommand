@@ -1,7 +1,7 @@
 name: mCommand
 version: ${version}
 main: io.github.miklires.mcommand.MCommand
-api-version: '26.2'
+api-version: '26.3'
 author: miklires
 description: A lightweight modular administration toolkit
 folia-supported: true

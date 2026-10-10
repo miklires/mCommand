@@ -37,7 +37,7 @@ mCommand is designed for servers that only need a focused administration toolkit
 ## Requirements
 
 - Java 25
-- Paper, Purpur, or Folia 26.2 (Minecraft 1.21.11)
+- Paper, Purpur, or Folia 26.3 (Minecraft 1.21.11)
 
 Velocity is not required and no proxy artifact is included.
 

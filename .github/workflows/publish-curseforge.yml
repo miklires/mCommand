@@ -24,7 +24,7 @@ jobs:
       BUNDLE_VERSION: ${{ inputs.bundle_version }}
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
       CURSEFORGE_PROJECT_ID: ${{ secrets.CURSEFORGE_PROJECT_ID }}
-      GAME_VERSION_NAMES: 26.2,Server,Paper,Purpur,Folia,Velocity,Java 25
+      GAME_VERSION_NAMES: 26.3,Server,Paper,Purpur,Folia,Velocity,Java 25
     steps:
       - uses: actions/checkout@v5
 
@@ -105,7 +105,7 @@ jobs:
           manifest = {
               "name": "mSuite",
               "bundleVersion": os.environ["BUNDLE_VERSION"],
-              "minecraft": "26.2",
+              "minecraft": "26.3",
               "java": 25,
               "components": components,
           }
@@ -157,8 +157,8 @@ jobs:
               if name.strip()
           ]
           selected = [name for name in wanted if name in available]
-          if "26.2" not in selected:
-              raise SystemExit("CurseForge does not currently expose Minecraft 26.2")
+          if "26.3" not in selected:
+              raise SystemExit("CurseForge does not currently expose Minecraft 26.3")
           Path("selected-game-versions.json").write_text(json.dumps(selected), encoding="utf-8")
           PY
 
